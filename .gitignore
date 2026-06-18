@@ -26,4 +26,8 @@ override.tf.json
 # example: *tfplan*
 *tfplan*
 
+# Ignore .idea directory which is used by JetBrains IDEs for project-specific settings and should not be included in version control
 .idea
+
+# Ignore lock.hcl files which are used by Terraform to manage provider dependencies and should not be included in version control
+*.lock.hcl

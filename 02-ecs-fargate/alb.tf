@@ -25,7 +25,7 @@ module "alb" {
 
   target_groups = {
     fargate-task = {
-      name              = "tg-069"
+      name              = "tg-x"
       protocol          = "HTTP"
       port              = var.container_port
       target_type       = "ip"
@@ -33,7 +33,7 @@ module "alb" {
 
       health_check = {
         enabled             = true
-        path                = "/health"
+        path                = "/"
         healthy_threshold   = 2
         unhealthy_threshold = 3
         interval            = 30
@@ -42,6 +42,7 @@ module "alb" {
       }
     }
   }
-
+  create_security_group = false
+  enable_deletion_protection = false
   tags = var.tags
 }

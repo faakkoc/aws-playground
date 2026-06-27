@@ -17,7 +17,7 @@ variable "container_image" {
 variable "container_port" {
   description = "Port exposed by the container"
   type        = number
-  default     = 8000
+  default     = 80
 }
 
 variable "task_cpu" {

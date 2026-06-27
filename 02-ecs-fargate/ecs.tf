@@ -8,7 +8,6 @@
 # up while the other is replaced), matching the CI/CD pipeline behaviour.
 module "ecs" {
   source  = "terraform-aws-modules/ecs/aws"
-  version = "~> 5.0"
 
   cluster_name = "cluster-069"
 
@@ -22,7 +21,9 @@ module "ecs" {
           image     = var.container_image
           essential = true
 
-          port_mappings = [
+          readonlyRootFilesystem = false
+
+          portMappings = [
             {
               name          = "fargate-task"
               containerPort = var.container_port
@@ -53,22 +54,21 @@ module "ecs" {
 
       # Module creates the task security group using these rules.
       # Keeps SG management close to the service definition.
-      security_group_rules = {
+      security_group_ingress_rules = {
         alb_ingress = {
-          type                     = "ingress"
-          from_port                = var.container_port
-          to_port                  = var.container_port
-          protocol                 = "tcp"
-          source_security_group_id = module.alb_sg.security_group_id
-          description              = "Allow inbound from ALB only"
+          from_port                    = var.container_port
+          to_port                      = var.container_port
+          ip_protocol                  = "tcp"
+          referenced_security_group_id = module.alb_sg.security_group_id
+          description                  = "Allow inbound from ALB only"
         }
+      }
+
+      security_group_egress_rules = {
         egress_all = {
-          type        = "egress"
-          from_port   = 0
-          to_port     = 0
-          protocol    = "-1"
-          cidr_blocks = ["0.0.0.0/0"]
-          description = "Allow all outbound – NAT GW routes to ECR, Secrets Manager, CloudWatch"
+          cidr_ipv4   = "0.0.0.0/0"
+          ip_protocol = "-1"
+          description = "Allow all outbound"
         }
       }
     }
